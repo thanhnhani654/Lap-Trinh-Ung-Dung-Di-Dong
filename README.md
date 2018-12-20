@@ -1,12 +1,12 @@
 # Lap-Trinh-Ung-Dung-Di-Dong
-###Mục lục
+### Mục lục  
 [I. Cài đặt Cordova](#Modau)  
 [II. Hưỡng dẫn chạy chương trình](#chaychuongtrinh)  
 [III. Giới thiệu Game](#gioithieugame)  
 <a name="Modau"></a>
-[1. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
+### [I. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
 <a name="chaychuongtrinh"></a>
-II. Hưỡng dẫn chạy chương trình  
+### II. Hưỡng dẫn chạy chương trình  
       Đầu tiên các bạn vào folder main và mở cửa sổ command promt bằng cách gõ cmd trên thanh address:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B1.png?raw=true">  
       Sau đó các bạn cần phải thêm thư viện của Phaser vào folder www:  
@@ -22,9 +22,9 @@ II. Hưỡng dẫn chạy chương trình
       Và theo đường dẫn dưới đây để tới cái app mà bạn build ra:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B8.png?raw=true">  
  <a name="gioithieugame"></a>
-III. Giới thiệu Game  
+### III. Giới thiệu Game  
 Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng các tháp phòng thủ ngăn cản và tiêu diệt kẻ thù không cho kẻ thù đến điểm Goal.  
-       1.	Giao diện 
+       #### 1.	Giao diện 
             Giao diện Game gồm có:  
             - 3 Button dùng để xây tháp phòng thủ và thông tin tháp phòng thủ  
             - 1 Button dùng để bắt đầu đợt tấn công  
@@ -34,7 +34,7 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
             - Thông tin Gold và Live của Player  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/Giao%20dien%201.png?raw=true">  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/Giao%20dien%202.png?raw=true">  
-       2.	GamePlay  
+       #### 2.	GamePlay  
       Mục đích của người chơi là xây các tháp phòng thủ ngăn cản đường đi của kẻ thù, tiêu diệt kẻ thù không để kẻ thù đi đến điểm Goal.  
             Cách chơi:  
             - Khi bắt đầu Player có 10 Gold dùng để xây tháp và 5 Lives  
