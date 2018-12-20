@@ -1,8 +1,8 @@
 # Lap-Trinh-Ung-Dung-Di-Dong
 ###Mục lục
-[I. Cài đặt Cordova](#Modau)
-[II. Hưỡng dẫn chạy chương trình](#chaychuongtrinh)
-[III. Giới thiệu Game](#gioithieugame)
+[I. Cài đặt Cordova](#Modau)  
+[II. Hưỡng dẫn chạy chương trình](#chaychuongtrinh)  
+[III. Giới thiệu Game](#gioithieugame)  
 <a name="Modau"></a>
 [1. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
 <a name="chaychuongtrinh"></a>
@@ -22,7 +22,7 @@ II. Hưỡng dẫn chạy chương trình
       Và theo đường dẫn dưới đây để tới cái app mà bạn build ra:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B8.png?raw=true">  
  <a name="gioithieugame"></a>
-III. Giới thiệu Game
+III. Giới thiệu Game  
 Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng các tháp phòng thủ ngăn cản và tiêu diệt kẻ thù không cho kẻ thù đến điểm Goal.  
        1.	Giao diện 
             Giao diện Game gồm có:  
