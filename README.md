@@ -7,7 +7,7 @@
 ### [I. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
 <a name="chaychuongtrinh"></a>
 ### II. Hưỡng dẫn chạy chương trình  
-      Đầu tiên các bạn vào folder main và mở cửa sổ command promt bằng cách gõ cmd trên thanh address:  
+Đầu tiên các bạn vào folder main và mở cửa sổ command promt bằng cách gõ cmd trên thanh address:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B1.png?raw=true">  
       Sau đó các bạn cần phải thêm thư viện của Phaser vào folder www:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B2.png?raw=true">  
