@@ -1,8 +1,12 @@
 # Lap-Trinh-Ung-Dung-Di-Dong
-
+###Mục lục
+[I. Cài đặt Cordova](#Modau)
+[II. Hưỡng dẫn chạy chương trình](#chaychuongtrinh)
+[III. Giới thiệu Game](#gioithieugame)
+<a name="Modau"></a>
 [1. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
-
-2. Hưỡng dẫn chạy chương trình  
+<a name="chaychuongtrinh"></a>
+II. Hưỡng dẫn chạy chương trình  
       Đầu tiên các bạn vào folder main và mở cửa sổ command promt bằng cách gõ cmd trên thanh address:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B1.png?raw=true">  
       Sau đó các bạn cần phải thêm thư viện của Phaser vào folder www:  
@@ -17,9 +21,10 @@
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B7.png?raw=true">  
       Và theo đường dẫn dưới đây để tới cái app mà bạn build ra:  
       <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Huong%20dan%20chay%20chuong%20trinh%20IMG/B8.png?raw=true">  
-[3. Giới thiệu Game]  
+ <a name="gioithieugame"></a>
+III. Giới thiệu Game
 Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng các tháp phòng thủ ngăn cản và tiêu diệt kẻ thù không cho kẻ thù đến điểm Goal.  
-      1.	Giao diện  
+       1.	Giao diện 
             Giao diện Game gồm có:  
             - 3 Button dùng để xây tháp phòng thủ và thông tin tháp phòng thủ  
             - 1 Button dùng để bắt đầu đợt tấn công  
