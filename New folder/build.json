@@ -1,0 +1,18 @@
+{
+    "android": {
+        "debug": {
+            "keystore": "../nhan.keystore",
+            "storePassword": "android",
+            "alias": "nhan",
+            "password" : "nhan",
+            "keystoreType": ""
+        },
+        "release": {
+            "keystore": "../nhan.keystore",
+            "storePassword": "nhan",
+            "alias": "nhan",
+            "password" : "nhan",
+            "keystoreType": ""
+        }
+    }
+}

@@ -1,0 +1,1050 @@
+document.addEventListener('deviceready', function() {
+    var config = {
+        type: Phaser.WEBGL,
+        autoResize: true,
+        parent: 'game',
+		physics: {
+        default: 'arcade',
+        arcade: { debug: true }
+		},
+        width: 800,
+        height: 480,
+        scene: {
+            preload: preload,
+            create: create,
+			update: update,
+			extend: {
+				CreateBullet1: CreateBullet1,
+			}
+        }
+    };
+    
+    var game = new Phaser.Game(config);
+	var RECTWIDTH = 80;
+	var RECTHEIGHT = 60;
+	var spawnpoint;
+	var goalpoint;
+	
+	var graphics;
+	var graphics2;
+	var graphics3;
+	
+	//Global varible
+	var board;
+	var waveControl;
+	var getDelta;
+	var button1;
+	var saleButton;
+	var upgradeButton;
+	
+	//Array list
+	var listTower = [];
+	var listEnemy = [];
+	var path = [];
+	var listBullet1 = [];
+	
+	
+	
+	var debugNode = true;			//Sửa lỗi false thi gam ko chay duoc
+	
+	//Debug with Keyboard
+	var keyA;
+	var keySpace;
+	
+	//Cac bien ho tro
+	var timeDrawPath = 1;						//Thời gian tô xanh mấy cái điểm
+	var timeDrawPathCount = timeDrawPath;
+	var DrawPathCount;							//Đếm số điểm tạo thành đường đi
+	var bDrawPath = false;
+	
+	
+	
+	//Debug
+	var debugText;
+	var debugText2;
+	
+	//Tap Display Upgrade and Sale UI 
+	var bModifingTower;
+	var bTapping;
+	var bTapOnTowerButton = false;
+	
+	//PathFinding
+	var pathCurves;
+	var bCreateFollower = false;
+	var bPathCreated = false;
+	
+	//Waves
+	
+	
+	//=================================Board==============================//
+	function PathNode()
+	{
+		var x = 0;
+		var y = 0;
+		var countPath = -1;
+		var debugNodeImg;
+		var par = null;
+	}
+	
+	function NodeRect()
+	{
+		var rectangle;
+		var indexX;
+		var indexY;
+		var object = null;
+		var pathNode;
+	}
+	
+	function BoardGame(){
+		var bBuilding = false;
+		var bCanBuild = false;
+		var bStartBuild = false;
+		var rectangles;
+		var buildingTemplate;
+		var index;						//Dung de xac dinh vi tri cua buildingTemplate trong mang rectangles
+	}
+	
+	function CreateBoard (g){
+		var board = new BoardGame();
+		board.rectangles = [];
+		board.buildingTemplate = new Phaser.Geom.Rectangle(0, 0, RECTWIDTH, RECTHEIGHT);
+		
+			for(var x = 1; x < 9; x++)
+			{
+				for(var y = 1; y < 6; y++)
+				{
+					var node = new NodeRect();
+					node.indexX = x - 1;
+					node.indexY = y - 1;
+					node.rectangle = new Phaser.Geom.Rectangle(x * RECTWIDTH, y * RECTHEIGHT, RECTWIDTH, RECTHEIGHT);
+					node.pathNode = new PathNode();
+					node.pathNode.x = x * RECTWIDTH + RECTWIDTH / 2;
+					node.pathNode.y = y * RECTHEIGHT + RECTHEIGHT / 2;
+					node.pathNode.countPath = -1;
+					
+					if (debugNode){
+						node.pathNode.debugNodeImg = new Phaser.Geom.Circle(x * RECTWIDTH + RECTWIDTH / 2, y * RECTHEIGHT + RECTHEIGHT / 2, 10);
+						graphics2.fillStyle(0xaa0000);
+						graphics2.fillCircleShape(node.pathNode.debugNodeImg);
+					}
+					
+					board.rectangles.push(node);
+				}
+			}
+		board.rectangles[2].pathNode.countPath = 0;
+		// 2dArray => board.rectangles[x*5 + y]  with x < 8 && y < 5
+		return board;
+	}
+	
+	// Thuật toán tìm đường đi: Bắt đầu từ 1 ô có sẵn, Xem xét 4 ô xung quanh kiểm tra 4 ô có thể đi được không. 
+	// Những ô đi được xem được thêm vào một list đồng thời những ô đó sẽ ghi nhớ lại ô trước đó sau đó đệ quy 
+	// tiếp tục xem xét những ô xung quanh những ô có trong list đến khi đến điểm Goal.
+	// Để giảm số lần lặp countPath có tác dụng đánh dấu ô đó đã được xem xét rồi nên không cần xem xét add list lại
+	
+	
+	function PathFinding(x,y, list)
+	{
+		var newList = [];
+			
+		if (list.length == 0)		//Chay lan dau khi chua co san List 
+		{
+			//Right
+			if (x < 7) {
+				if (board.rectangles[(x+1)*5+y].pathNode.countPath == -1 && !board.rectangles[(x+1)*5+y].object){
+					
+					board.rectangles[(x+1)*5+y].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+					newList.push(board.rectangles[(x+1)*5+y]);
+					board.rectangles[(x+1)*5+y].pathNode.par = board.rectangles[2];
+				}
+			}
+			//Top
+			if (y > 0) {
+				if (board.rectangles[x*5+y-1].pathNode.countPath == -1 && !board.rectangles[x*5+y-1].object){
+					board.rectangles[x*5+y-1].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+					newList.push(board.rectangles[x*5+y-1]);
+					board.rectangles[x*5+y-1].pathNode.par = board.rectangles[2];
+				}
+			}
+			//Bottom
+			if (y < 4) {
+				if (board.rectangles[x*5+y+1].pathNode.countPath == -1 && !board.rectangles[x*5+y+1].object){
+					board.rectangles[x*5+y+1].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+					newList.push(board.rectangles[x*5+y+1]);
+					board.rectangles[x*5+y+1].pathNode.par = board.rectangles[2];
+				}
+			}
+			
+			//Left
+			if (x > 0) {
+				if (board.rectangles[(x-1)*5+y].pathNode.countPath == -1 && !board.rectangles[(x-1)*5+y].object){
+					board.rectangles[(x-1)*5+y].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+					newList.push(board.rectangles[(x-1)*5+y]);
+					board.rectangles[(x-1)*5+y].pathNode.par = board.rectangles[2];
+				}
+			}
+		}
+		else {
+			for (var i = 0; i< list.length; i++){
+				
+				var x = list[i].indexX;
+				var y = list[i].indexY;
+				
+				if (list[i].indexX == 7 && list[i].indexY == 2)
+				{					
+					path.push(board.rectangles[x*5+y].pathNode);	
+					return list[i].pathNode.par;
+				}
+				
+				//Right
+				if (list[i].indexX < 7) {
+					if (board.rectangles[(x+1)*5+y].pathNode.countPath == -1 && !board.rectangles[(x+1)*5+y].object){
+					
+						board.rectangles[(x+1)*5+y].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+						newList.push(board.rectangles[(x+1)*5+y]);
+						board.rectangles[(x+1)*5+y].pathNode.par = list[i];
+					}
+				}
+				//Top
+				if (list[i].indexY > 0) {
+					if (board.rectangles[x*5+y-1].pathNode.countPath == -1 && !board.rectangles[x*5+y-1].object){
+						board.rectangles[x*5+y-1].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+						newList.push(board.rectangles[x*5+y-1]);
+						board.rectangles[x*5+y-1].pathNode.par = list[i];
+					}
+				}
+				//Bottom
+				if (list[i].indexY < 4) {
+					if (board.rectangles[x*5+y+1].pathNode.countPath == -1 && !board.rectangles[x*5+y+1].object){
+						board.rectangles[x*5+y+1].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+						newList.push(board.rectangles[x*5+y+1]);
+						board.rectangles[x*5+y+1].pathNode.par = list[i];
+					}
+				}
+			
+				//Left
+				if (list[i].indexX > 0) {
+					if (board.rectangles[(x-1)*5+y].pathNode.countPath == -1 && !board.rectangles[(x-1)*5+y].object){
+						board.rectangles[(x-1)*5+y].pathNode.countPath = board.rectangles[x*5+y].pathNode.countPath + 1;
+						newList.push(board.rectangles[(x-1)*5+y]);
+						board.rectangles[(x-1)*5+y].pathNode.par = list[i];
+					}
+				}
+			}
+		}
+		
+		var temp = PathFinding(0,0,newList);
+		
+		path.push(temp.pathNode);
+		
+		return temp.pathNode.par;
+	}
+	
+	function EnableDrawPath(delta)
+	{
+		if (!bDrawPath) {
+			bDrawPath = true;
+			DrawPathCount = path.length - 1;
+			CreatePath();
+		}
+		else{
+			bDrawPath = false;
+			ResetPath();
+			
+		}
+	}
+	
+	function DrawPath()
+	{
+		if (bDrawPath){
+			if (DrawPathCount >= 0)
+			{
+				if (timeDrawPathCount < 0)
+				{
+					graphics3.fillStyle(0x00ff00);
+					graphics3.fillCircleShape(path[DrawPathCount].debugNodeImg);
+					timeDrawPathCount = timeDrawPath
+					DrawPathCount -= 1;	
+				}
+				else
+				{
+					timeDrawPathCount -= getDelta;
+				}
+			}
+			else
+			{
+				graphics3.clear();
+				for (var i = 0; i < board.rectangles.length; i++)
+				{
+					graphics3.fillStyle(0xaa0000);
+					graphics3.fillCircleShape(board.rectangles[i].pathNode.debugNodeImg);
+				}
+				DrawPathCount = path.length - 1;
+			}
+		}
+		
+	}
+	
+	function ResetPath()
+	{
+		for (var i = 0; i < board.rectangles.length; i++)
+		{
+			graphics2.fillStyle(0xaa0000);
+			graphics2.fillCircleShape(board.rectangles[i].pathNode.debugNodeImg);
+			board.rectangles[i].pathNode.countPath = -1;
+			board.rectangles[i].pathNode.par = null;
+		}
+		board.rectangles[2].pathNode.countPath = 0;
+		pathCurves.destroy();
+		path = [];
+		bPathCreated = false;
+		DrawPathCount = -1;
+	}
+	
+	function UpdateBoard(point) {
+		if (board == null)
+		{
+			return;
+		}
+		
+		graphics.lineStyle(2, 0x0000aa);
+	
+		for(var i = 0; i < board.rectangles.length; i++)
+		{
+			graphics.strokeRectShape(board.rectangles[i].rectangle);
+		}
+	
+		if (!board.bBuilding)
+		{
+			//debugText.setText(20);
+			return;
+		}
+		else
+			//debugText.setText(10);
+		
+		var bContain = false;
+		for(var i = 0; i < board.rectangles.length; i++)
+		{
+			 if(Phaser.Geom.Rectangle.ContainsPoint(board.rectangles[i].rectangle, point))
+			 {
+				 bContain = true;
+				 board.buildingTemplate.x = board.rectangles[i].rectangle.x;
+				 board.buildingTemplate.y = board.rectangles[i].rectangle.y;
+				 board.index = i;
+				 if (board.rectangles[i].object == null)
+				 {
+					 graphics.fillStyle(0x00aa00);
+					 board.bCanBuild = true;
+					 graphics.fillRectShape(board.buildingTemplate);
+					 break;
+				 }
+				 else
+				 {
+					 graphics.fillStyle(0xaa0000);
+				 }
+				 graphics.fillRectShape(board.buildingTemplate);
+			 }
+		}	
+		if (!bContain)
+		{
+			board.bCanBuild = false;
+		}
+		bContain = false;
+	}
+	
+	function GetRectOnTap(point)
+	{
+		for(var i = 0; i < board.rectangles.length; i++)
+		{
+			 if(Phaser.Geom.Rectangle.ContainsPoint(board.rectangles[i].rectangle, point))
+			 {
+				return board.rectangles[i];
+			 }
+		}	
+		
+		return null;
+	}
+	
+	function CreatePath()
+	{
+		var points = [];
+		points.push(new Phaser.Math.Vector2(spawnpoint.x + RECTWIDTH / 2, spawnpoint.y + RECTHEIGHT / 2));
+		
+		for (var i = path.length - 1; i >= 0; i--)
+		{
+			points.push(new Phaser.Math.Vector2(path[i].debugNodeImg.x,path[i].debugNodeImg.y));			
+		}
+		
+		var curve = new Phaser.Curves.Spline(points);
+		
+		graphics2.lineStyle(1, 0xffffff, 1);
+		
+		curve.draw(graphics2, 64);
+		
+		pathCurves.add(curve);		
+		
+		bCreateFollower = true;
+		bPathCreated = true;
+	}
+	//====================================================================//
+	
+	//=================================BuildTower1==============================//
+	
+	function Tower1 () {
+		var _tower;
+		var range;
+		var fireRate;
+		var fireRateCount;
+		var bDisable = false;
+		var node;
+		var target;
+		var dmg;
+		
+	}
+	
+	function BuildTower1(x,y, scene){
+		
+		for (var i = 0; i < listTower.length; i++)
+		{
+			if (listTower[i].bDisable)
+			{
+				listTower[i]._tower.x = x + RECTWIDTH / 4;
+				listTower[i]._tower.y = y + RECTHEIGHT / 4;
+				listTower[i].bDisable =false;
+				
+				return listTower[i];
+			}
+		}
+		var tower = new Tower1();
+		tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4, y + RECTHEIGHT / 4, RECTWIDTH / 2, RECTHEIGHT / 2);
+		tower.fireRate = 0.2;
+		tower.fireRateCount = tower.fireRate;
+		tower.range = 200;
+		tower.target = null;
+		tower.dmg = 2;
+		
+		listTower.push(tower);
+		return tower;
+	}
+	
+	function Tower1Fire(tower, target, scene)
+	{
+		tower.fireRateCount -= getDelta;
+		if (tower.fireRateCount < 0)
+		{
+			CreateBullet1(tower,target,scene);
+			tower.fireRateCount = tower.fireRate;
+		}
+	}
+	
+	function UpdateTower1(scene)
+	{
+		for (var i = 0; i < listTower.length; i++)
+		{
+			if (listTower[i].bDisable)
+				continue;
+			graphics.fillStyle(0x00aaaa);
+			graphics.fillRectShape(listTower[i]._tower);
+			
+			//Tower 1 Attack Mechanic
+			//Phaser.Math.Distance.Between(listEnemy[i].img.x,listEnemy[i].img.y, listTower[i]._tower.x,listTower[i]._tower.y)
+			
+			for (var ie = 0; ie < listEnemy.length; ie++) {
+				if (Phaser.Math.Distance.Between(listEnemy[ie].img.x,listEnemy[ie].img.y, listTower[i]._tower.x,listTower[i]._tower.y) < listTower[i].range)
+				{
+					Tower1Fire(listTower[i], listEnemy[ie], scene);
+					break;
+				}
+				
+			}	
+			
+		}
+	}
+	
+	
+	
+	function Bullet1() {
+		var img ;
+		var speed;
+		var dmg;
+		var bDisable;
+		var target;
+	}
+	
+	function CreateBullet1(firer,target,scene)
+	{
+		for (var i = 0; i < listBullet1.length; i++)
+		{
+			if (listBullet1.bDisable)
+			{
+				listBullet1[i].img = scene.physics.add.image(firer._tower.x,firer._tower.y, 'bullet1');
+				listBullet1[i].img.x = firer._tower.x;
+				listBullet1[i].img.y = firer._tower.y;
+				listBullet1[i].bDisable = false;
+				listBullet1[i].target = target;
+				return listBullet1[i];
+			}
+		}
+		var bullet = new Bullet1();
+		bullet.img = scene.physics.add.image(firer._tower.x,firer._tower.y, 'bullet1');
+		bullet.speed = 800;
+		bullet.dmg = firer.dmg;
+		bullet.bDisable = false;
+		bullet.target = target;
+		
+		listBullet1.push(bullet);
+	}
+	
+	function UpdateBullet1(scene)
+	{
+		
+		for (var i = 0; i < listBullet1.length; i++)
+		{
+			if (!listBullet1[i].bDisable)
+			{
+				if (listBullet1[i].target.disable) {
+					listBullet1[i].bDisable = true;
+					listBullet1[i].img.destroy();
+				}
+				
+				if (listBullet1[i].target.img)
+					scene.physics.moveToObject(listBullet1[i].img, listBullet1[i].target.img, listBullet1[i].speed);
+				
+				var collider = scene.physics.add.overlap(listBullet1[i].img, listBullet1[i].target.img, function (clownOnBlock)
+				{
+					i--;
+					listBullet1[i].bDisable = true;
+					listBullet1[i].img.destroy();
+					
+					listBullet1[i].target.HP -= listBullet1[i].dmg;
+			
+					scene.physics.world.removeCollider(collider);
+				}, null, scene);
+			}
+		}
+		
+		
+	}
+	
+	function CheckOverLapRectSprite(rect1, sprite)
+	{
+		var tempRect = new Phaser.Geom.Rectangle(sprite.x, sprite.y, sprite.width, sprite.height);
+		
+		if (Phaser.Geom.Rectangle.Overlaps(rect1, tempRect))
+			return true;
+		return false;
+	}
+	
+	//==========================================================================//
+	
+	//=================================Enemy==============================//
+	function EnemySpawnPointInit() {
+		spawnpoint = new Phaser.Geom.Rectangle(0, 3 * RECTHEIGHT , RECTWIDTH, RECTHEIGHT);
+		graphics2.lineStyle(2, 0xaa0000);
+		graphics2.strokeRectShape(spawnpoint);
+	}
+	
+	function EnemyGoalPointInit() {
+		goalpoint = new Phaser.Geom.Rectangle(9 * RECTWIDTH, 3 * RECTHEIGHT , RECTWIDTH, RECTHEIGHT);
+		graphics2.lineStyle(2, 0xaa0000);
+		graphics2.strokeRectShape(goalpoint);
+	}
+	
+	function Enemy1()
+	{
+		var img;
+		var speed = 2000;
+		var follower;
+		var followerCreated;
+		var disable;
+		var HP;
+	}
+	
+	function CreateEnemy1(scene)
+	{
+		
+		var enemy = new Enemy1();
+		
+		//enemy.img = new Phaser.Geom.Circle(spawnpoint.x + RECTWIDTH / 2, spawnpoint.y + RECTHEIGHT / 2, 10);
+		enemy.img = scene.physics.add.image(spawnpoint.x + RECTWIDTH / 2,spawnpoint.y + RECTHEIGHT / 2, 'enemy1');
+		enemy.follower = { t: 0, vec: new Phaser.Math.Vector2() };
+		enemy.followerCreated = false;
+		enemy.disable = false;
+		
+		enemy.HP = 5;
+		
+		
+		listEnemy.push(enemy);
+	}
+	
+	function UpdateEnemy1()
+	{
+		for (var i = 0; i < listEnemy.length; i++)
+		{
+			listEnemy[i].img.x = listEnemy[i].follower.vec.x;
+			listEnemy[i].img.y = listEnemy[i].follower.vec.y;
+			graphics.fillStyle(0xaa0000);
+			graphics.fillCircleShape(listEnemy[i].img);
+			
+			if (listEnemy[i].HP <= 0){
+				listEnemy[i].disable = true;
+				listEnemy[i].img.destroy();
+				waveControl.creatureDeath += 1;
+			}
+			
+		}
+		var index = -1;
+		for (var i = 0; i < listEnemy.length; i++)
+		{
+			if (listEnemy[i].disable){
+				index = i;
+				break;
+			}
+		}
+		
+		if (index >=0 )
+		{
+			listEnemy.splice(index,1);
+		}
+	}
+	//====================================================================//
+	
+	//==================================UI================================//
+	
+	function TowerButton()
+	{
+		var _button;
+		var _object;
+	}
+	 
+	function TapOnTower(pointer) {
+		if (board.bBuilding || bModifingTower || !waveControl.bEndWave)
+			return;
+		if (pointer.upTime - pointer.downTime > 100)
+		{
+			
+			var rect = GetRectOnTap(pointer);
+			if (!rect)
+				 return;
+			
+			bModifingTower = true;
+			 
+			if (!rect.object)
+			{
+				bModifingTower = false;
+			}
+			else
+			{	
+				saleButton._button.x = rect.rectangle.x + 50 + RECTWIDTH / 2;
+				saleButton._button.y = rect.rectangle.y + RECTHEIGHT / 2;
+				saleButton._object = rect;
+				saleButton._button.visible = true;
+				
+				upgradeButton._button.x = rect.rectangle.x - 50 + RECTWIDTH / 2;
+				upgradeButton._button.y = rect.rectangle.y + RECTHEIGHT / 2;
+				upgradeButton._object = rect;
+				upgradeButton._button.visible = true;
+			}
+		}
+	}
+	
+	function HiddenTowerButton() {
+		if (bModifingTower)
+			bModifingTower = false;
+		saleButton._button.visible = false;
+		upgradeButton._button.visible = false;
+	}
+	
+	function CheckTapOutTowerModButton() {
+		if (bModifingTower)
+			if (!bTapOnTowerButton)
+			{
+				bModifingTower = false;
+				HiddenTowerButton();
+			}
+			else
+			{
+				bTapOnTowerButton = false;
+			}
+	}
+	
+	//====================================================================//
+	
+	//==========================Spawner & Waves ==========================//
+	
+	
+	
+	function Spawner() {
+		var type;					//Loai Creature
+		var amount;					//So luong	
+		var startTime;				//Thoi gian bat dau Spawn sau khi wave bat dau
+		var interval;				//Thoi gian giua cac lan Spawn
+		var intervalCount;
+	}
+	
+	var spawnList = [];
+	
+	function SpawnCreature (type, amount, startTime, intervalTime) {
+		var sp = new Spawner();
+		sp.type = type;
+		sp.amount = amount;
+		sp.startTime = startTime;
+		sp.interval = intervalTime;
+		sp.intervalCount = 0;
+		
+		spawnList.push(sp);
+		
+	}
+	
+	function Spawning(scene) {
+		for (var i = 0; i < spawnList.length; i++) {
+
+			if (spawnList[i].amount <= 0)
+				continue;
+			
+			spawnList[i].startTime -= getDelta;
+			if (spawnList[i].startTime > 0)
+				continue;
+			
+			spawnList[i].intervalCount -= getDelta;
+			
+			if (spawnList[i].intervalCount > 0)
+				continue;
+			
+			spawnList[i].intervalCount = spawnList[i].interval;
+			debugText.setText(listEnemy.length);
+			spawnList[i].amount -=1;
+			switch(spawnList[i].type)
+			{
+				case 0:			
+								
+					CreateEnemy1(scene);		
+										
+				break;
+			}
+			
+			bCreateFollower = true;
+			
+		}
+	}
+	
+	function Waves (){
+		var level;
+		var nextWaveTime;
+		var nextWaveTimeCount;
+		var img;
+		var bEndWave;
+		
+		var creatureDeath;
+		var creatureAmount;
+	}
+	
+	function CreateWave(scene) {
+		waveControl = new Waves();
+		waveControl.level = 0;
+		waveControl.bEndWave = true;
+		waveControl.nextWaveTime = 30;
+		waveControl.nextWaveTimeCount = waveControl.nextWaveTime;
+		waveControl.img = scene.add.sprite(70, 400, 'startWaveButton').setInteractive();
+		waveControl.img.visible = true;
+		waveControl.creatureDeath = 0;
+		waveControl.creatureAmount = 0;
+		
+		waveControl.img.on('pointerup', function(pointer){
+			StartWave();
+		});
+	}
+	
+	function StartWave() {
+		waveControl.bEndWave = false;
+		waveControl.img.visible = false;
+		
+		var tempList = [];
+		PathFinding(0,2, tempList);	
+		EnableDrawPath();
+		
+		switch (waveControl.level)
+		{
+			case 0:
+				waveControl.creatureAmount = 2;
+				SpawnCreature(0,2,1,1);				
+				break;
+			case 1:
+				waveControl.creatureAmount = 4;
+				SpawnCreature(0,4,1,1);	
+				break;
+			case 2:
+				waveControl.creatureAmount = 5;
+				SpawnCreature(0,5,1,0.5);	
+				break;
+			default:
+				waveControl.creatureAmount = 0;
+				break;
+		}
+	}
+	
+	function EndWave() {
+		waveControl.level++;
+		waveControl.bEndWave = true;
+		waveControl.img.visible = true;
+		waveControl.nextWaveTimeCount = waveControl.nextWaveTime;
+		waveControl.creatureDeath = 0;
+		EnableDrawPath();
+	}
+	
+	function WaveTimeCount()
+	{
+		waveControl.nextWaveTimeCount -= getDelta;
+		
+		if (waveControl.nextWaveTimeCount <= 0)
+			StartWave();
+	}
+	
+	function WavesUpdate() {
+		if (waveControl.bEndWave) {
+			WaveTimeCount();	
+		}
+		else {
+			if (waveControl.creatureAmount <= waveControl.creatureDeath)
+				EndWave();
+		}
+	}
+	
+	//====================================================================//
+	
+	//=================================Main===============================//
+	
+    function preload() {
+		this.load.image('button1', 'img/button1.png');
+		this.load.image('sale', 'img/sale.png');
+		this.load.image('upgrade', 'img/upgrade.png');
+		this.load.image('debugDrawPath1', 'img/DebugDrawPath1.png');
+		this.load.image('debugDrawPath2', 'img/DebugDrawPath2.png');
+		this.load.image('bullet1', 'img/bullet1.png');
+		this.load.image('enemy1', 'img/enemy1.png');
+		this.load.image('startWaveButton', 'img/StartWaveButton.png');
+    }
+    
+    function create() {
+		graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x00aa00 } });
+		graphics2 = this.add.graphics({ lineStyle: { width: 2, color: 0x00aa00 } });
+		graphics2.clear();
+		graphics3 = this.add.graphics({ lineStyle: { width: 2, color: 0x00aa00 } });
+		graphics3.clear();
+		
+		debugText = this.add.text(50,280);
+		debugText2 = this.add.text(50,360);
+		
+		keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+		keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+		
+		this.input.mouse.disableContextMenu();
+		this.input.setPollAlways();
+		board = CreateBoard(graphics);
+		
+		pathCurves = this.add.path();
+		
+		
+		
+		//=================================UI==============================//
+		///////////
+		//Tap Controller//
+		//TapUp
+		this.input.on('pointerup', function (pointer) {
+			if (pointer.rightButtonDown())
+			{
+				//Building
+				if (board.bBuilding)
+				{
+					board.bBuilding = false;
+				}
+			}
+			else
+			{
+				//Building
+				if (board.bBuilding)
+				{
+					if (!board.bCanBuild && board.bStartBuild)
+					{
+						board.bBuilding = false;
+						board.bStartBuild = false;		
+						button1.clearTint();
+					}
+					else if (board.bCanBuild)
+					{	
+						board.bBuilding = false;
+						board.bStartBuild = false;
+						board.bCanBuild = false;
+						var tower = BuildTower1(board.buildingTemplate.x,board.buildingTemplate.y, this);
+						board.rectangles[board.index].object = tower;
+						tower.node = board.rectangles[board.index];
+						button1.clearTint();
+					}
+					else
+						board.bStartBuild = true;
+				}
+				///////////
+				
+				//Control UI	
+				CheckTapOutTowerModButton();
+					
+				TapOnTower(pointer);
+				
+				bTapping = false;
+				///////////
+			}
+		}, this);	
+		
+		//TapDown
+		this.input.on('pointerdown', function (pointer) {
+			if (!pointer.rightButtonDown())
+			{
+				//Control UI
+				bTapping = true;
+			}
+
+		}, this);
+		///////////////////	
+		//Button//
+		//Tower 1
+		button1 = this.add.sprite(740, 420, 'button1', 'button1.png').setInteractive();
+		
+		button1.on('pointerdown', function (pointer){
+			this.setTint(0x00ff00);
+		});
+		
+		button1.on('pointerout', function(pointer){
+			if (!board.bBuilding)
+				this.clearTint();
+		});
+		
+		button1.on('pointerup', function(pointer){
+			this.clearTint();
+			if (bModifingTower)
+				return;
+			if (waveControl.bEndWave) { 
+				board.bBuilding = true;
+				this.setTint(0x0000ff);
+			}
+		});
+		
+		//Sale
+		saleButton = new TowerButton();
+		saleButton._button = this.add.sprite(500, 420, 'sale').setInteractive();
+		saleButton._button.visible = false;
+		
+		saleButton._button.on('pointerdown', function(pointer){
+			if (bModifingTower)
+			{
+				bTapOnTowerButton = true;
+			}
+		});
+		
+		saleButton._button.on('pointerup', function(pointer){
+			if (bModifingTower)
+			{
+				saleButton._object.object.bDisable = true;
+				saleButton._object.object = null;
+				HiddenTowerButton();
+			}
+		});
+		
+		//Upgrade		
+		upgradeButton = new TowerButton();
+		upgradeButton._button = this.add.sprite(400, 420, 'upgrade').setInteractive();
+		upgradeButton._button.visible = false;
+		
+		upgradeButton._button.on('pointerdown', function(pointer){
+			if (bModifingTower)
+			{
+				bTapOnTowerButton = true;
+			}
+		});
+		
+		upgradeButton._button.on('pointerup', function(pointer){
+			if (bModifingTower)
+				debugText.setText("Upgrade");
+		});
+		
+		///////////
+		//Board////
+		
+		EnemySpawnPointInit();
+		EnemyGoalPointInit();
+		//CreateEnemy1(this);
+		//CreateEnemy1(this);
+		
+				
+		///////////
+		//====================================================================//
+		
+		CreateWave(this);
+		
+    }    
+	
+	var countFrame = 0;
+	var deltatimer = 0;
+	
+	
+	function update(time, delta){
+		graphics.clear();
+		getDelta = delta / 1000;
+		
+		countFrame++;
+		deltatimer += delta / 1000;
+		if(deltatimer >= 1)
+		{
+			debugText2.setText(countFrame);
+			countFrame = 0;
+			deltatimer = 0;
+		}
+	
+		UpdateBoard(game.input.activePointer);
+		UpdateEnemy1();
+		UpdateTower1(this);
+		UpdateBullet1(this);
+		
+		Spawning(this);
+		WavesUpdate();
+		
+		DrawPath();
+		
+		if (bCreateFollower)
+		{		
+			for (var i = 0; i < listEnemy.length; i++) { 
+				if (listEnemy[i].followerCreated)
+					continue;
+				
+				this.tweens.add({
+					targets: listEnemy[i].follower,
+					t: 1,
+					//ease: 'Linear',
+					duration: 4000,
+					yoyo: true,
+					repeat: -1
+				});
+				listEnemy[i].followerCreated = true;
+			}		
+						
+			bCreateFollower = false;
+		}
+		if (bPathCreated)
+		{
+			for (var i = 0; i < listEnemy.length; i++) { 
+				pathCurves.getPoint(listEnemy[i].follower.t, listEnemy[i].follower.vec);
+				if (1 == listEnemy[i].follower.t){
+					listEnemy[i].disable = true;				
+				}
+			}	
+		}
+
+		if (keyA.isDown)
+		{
+			SpawnCreature(0,10,1,0.5);
+		}
+		
+	}
+});
+
+if (!window.cordova) {
+    window.dispatchEvent('deviceready');
+}
