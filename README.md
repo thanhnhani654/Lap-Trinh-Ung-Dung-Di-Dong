@@ -3,6 +3,7 @@
 [I. Cài đặt Cordova](#Modau)  
 [II. Hưỡng dẫn chạy chương trình](#chaychuongtrinh)  
 [III. Giới thiệu Game](#gioithieugame)  
+[IV. Link Tải Game](#taigame)  
 <a name="Modau"></a>
 ### [I. Cài đặt Cordova](https://evothings.com/doc/build/cordova-install-windows.html)  
 <a name="chaychuongtrinh"></a>
@@ -46,5 +47,8 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay2.png?raw=true">  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay3.png?raw=true">  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay4.png?raw=true">  
+ <a name="taigame"></a>
+### IV. Link Tải Game
+https://drive.google.com/file/d/1J0cLcfRWNupcelVdnunm_5Saqt-TOFjc/view?usp=sharing
 
 
