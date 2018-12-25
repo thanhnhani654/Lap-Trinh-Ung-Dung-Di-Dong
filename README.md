@@ -47,7 +47,7 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
                   + Button Nâng Cấp
             - Có 2 loại Enemy:
                   + Red Enemy: có tất cả 3 cấp độ với mức máu và lượng vàng rơi ra cao theo từng cấp độ, có thể bị các tower chặn đường.
-                        ++ Red Enemy Lv1: Hp 15, Gold 1.<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/RedEnemylv1.png?raw=true"
+                        ++ Red Enemy Lv1: Hp 15, Gold 1.<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/RedEnemylv1.png?raw=true">
                         ++ Red Enemy Lv2: Hp 100, Gold 10.
                         ++ Red Enemy Lv3: Hp 1000, Gold 100.
                   + Yellow Enemy: có tất cả 3 cấp độ với mức máu và lượng vàng rơi ra cao theo từng cấp độ, không thể bị các tower chặn đường.
@@ -65,11 +65,10 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
                         ++ Tower 3 Lv1: Tốc độc bắn 0.5, tấn công 20.
                         ++ Tower 3 Lv2: Tốc độc bắn 0.5, tấn công 100.
 
-
-            <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay1.png?raw=true">  
-            <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay2.png?raw=true">  
-            <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay3.png?raw=true">  
-            <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay4.png?raw=true">  
+<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay1.png?raw=true">  
+<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay2.png?raw=true">  
+<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay3.png?raw=true">  
+<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay4.png?raw=true">  
  <a name="taigame"></a>
 ### IV. Link Tải Game
 https://drive.google.com/file/d/1J0cLcfRWNupcelVdnunm_5Saqt-TOFjc/view?usp=sharing
