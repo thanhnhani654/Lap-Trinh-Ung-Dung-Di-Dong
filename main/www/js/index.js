@@ -37,6 +37,7 @@ document.addEventListener('deviceready', function() {
 	var button1;
 	var buttonTower2;
 	var buttonTower3;
+	var buttonRestartGame;
 	var saleButton;
 	var upgradeButton;
 	var buildTowerID; 				//Xác định loại Tower cần build khi building
@@ -50,6 +51,8 @@ document.addEventListener('deviceready', function() {
 	var liveDisplay;
 	var resetGold = false;
 	var stopSpawn = false;
+	var countRestartTap = 0;
+	var countRestartTapTime = 3;
 	
 	//Array list
 	var listTower = [];
@@ -433,7 +436,6 @@ document.addEventListener('deviceready', function() {
 			}
 		}
 		//
-		debugText.setText(gold);
 		stopSpawn = true;
 		waveControl.level = -1;
 		live = 5;
@@ -1412,6 +1414,7 @@ document.addEventListener('deviceready', function() {
 		this.load.image('enemy22', 'img/Enemy22.png');
 		this.load.image('enemy23', 'img/Enemy23.png');
 		this.load.image('startWaveButton', 'img/StartWaveButton.png');
+		this.load.image('restartGame', 'img/RestartGame.png');
     }
     
     function create() {
@@ -1644,6 +1647,29 @@ document.addEventListener('deviceready', function() {
 			}
 		});
 		
+		///////////////////	
+		//RestartGame/////////////
+		buttonRestartGame = this.add.sprite(610, 4 * RECTHEIGHT + RECTHEIGHT/4, 'restartGame').setInteractive();
+		
+		buttonRestartGame.on('pointerdown', function (pointer){
+			this.setTint(0x00ff00);
+		});
+		
+		buttonRestartGame.on('pointerout', function(pointer){
+			this.clearTint();
+			countRestartTap = 0;
+		});
+		
+		buttonRestartGame.on('pointerup', function(pointer){
+			if (countRestartTap == 0)
+				countRestartTap = 1;
+			else if (countRestartTap == 1) {
+				ResetGame();
+				countRestartTap = 0;
+			}
+		});
+		
+		//////////////////////
 		///////////
 		//Board////
 		// Tạo điểm khởi đầu và kết thúc cho Creature
@@ -1693,6 +1719,14 @@ document.addEventListener('deviceready', function() {
 		
 		Spawning(this);
 		WavesUpdate();
+		
+		if (countRestartTap == 1) {
+			countRestartTapTime -= getDelta;
+			if (countRestartTapTime <= 0) {
+				countRestartTap == 0;
+				countRestartTapTime = 3;
+			}
+		}
 		
 		DrawPath();
 		
