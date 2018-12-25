@@ -48,6 +48,8 @@ document.addEventListener('deviceready', function() {
 	var goldDisplay;
 	var liveText;
 	var liveDisplay;
+	var resetGold = false;
+	var stopSpawn = false;
 	
 	//Array list
 	var listTower = [];
@@ -415,11 +417,15 @@ document.addEventListener('deviceready', function() {
 	
 	function ResetGame()
 	{	
-		gold = 9;
+		resetGold = true;
 		for (var i = 0; i < listEnemy.length; i++) { 
-			listEnemy[i].HP = 0;
-			gold -= listEnemy[i].gold;
+			listEnemy[i].HP = -1;		
 		}
+		UpdateEnemy1();
+		for (var i = 0; i < listEnemy2.length; i++) { 
+			listEnemy2[i].HP = -1;	
+		}
+		UpdateEnemy2();
 		for (var i = 0; i < board.rectangles.length; i++) {
 			if (board.rectangles[i].object) {
 				board.rectangles[i].object.bDisable = true;
@@ -427,10 +433,11 @@ document.addEventListener('deviceready', function() {
 			}
 		}
 		//
-		//waveControl.creatureDeath = waveControl.creatureAmount;
+		debugText.setText(gold);
+		stopSpawn = true;
 		waveControl.level = -1;
-		//gold = 10;
-		live = 1;
+		live = 5;
+		EndWave();
 	}
 	
 	// Xóa đường đi hiện tại để tìm đường đi mới
@@ -553,7 +560,7 @@ document.addEventListener('deviceready', function() {
 				return null;
 			gold -= tower.gold;
 			tower.id = 0;
-			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4, y + RECTHEIGHT / 4, RECTWIDTH / 2, RECTHEIGHT / 2);	
+			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4 + RECTWIDTH / 16, y + RECTHEIGHT / 4, (RECTWIDTH - RECTWIDTH/4) / 2, RECTHEIGHT / 2);	
 			tower.fireRate = 1.0;
 			tower.fireRateCount = 0;
 			tower.range = 100;
@@ -573,7 +580,7 @@ document.addEventListener('deviceready', function() {
 			gold -= tower.gold;
 			
 			tower.id = 1;
-			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4, y + RECTHEIGHT / 4, RECTWIDTH / 2, RECTHEIGHT / 2);
+			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4 + RECTWIDTH / 16, y + RECTHEIGHT / 4, (RECTWIDTH - RECTWIDTH/4) / 2, RECTHEIGHT / 2);
 			tower.range = 100;
 			tower._rangeImg = new Phaser.Geom.Circle(x + RECTWIDTH / 2, y + RECTHEIGHT / 2,tower.range);
 			tower.target = null;
@@ -590,7 +597,7 @@ document.addEventListener('deviceready', function() {
 				return null;
 			gold -= tower.gold;
 			tower.id = 2;
-			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4, y + RECTHEIGHT / 4, RECTWIDTH / 2, RECTHEIGHT / 2);
+			tower._tower = new Phaser.Geom.Rectangle(x + RECTWIDTH / 4 + RECTWIDTH / 16, y + RECTHEIGHT / 4, (RECTWIDTH - RECTWIDTH/4) / 2, RECTHEIGHT / 2);
 			tower.fireRate = 2.0;
 			tower.fireRateCount = 0;
 			tower.range = 100;
@@ -737,9 +744,9 @@ document.addEventListener('deviceready', function() {
 		{
 			if (listBullet1.bDisable)
 			{
-				listBullet1[i].img = scene.physics.add.image(firer._tower.x,firer._tower.y, 'bullet1');
-				listBullet1[i].img.x = firer._tower.x;
-				listBullet1[i].img.y = firer._tower.y;
+				listBullet1[i].img = scene.physics.add.image(firer._tower.x + (RECTWIDTH - RECTWIDTH/4) / 4,firer._tower.y + (RECTHEIGHT / 4), 'bullet1');
+				listBullet1[i].img.x = firer._tower.x + (RECTWIDTH - RECTWIDTH/4) / 4;
+				listBullet1[i].img.y = firer._tower.y + (RECTHEIGHT / 4);
 				listBullet1[i].bDisable = false;
 				listBullet1[i].target = target;
 				return listBullet1[i];
@@ -747,8 +754,8 @@ document.addEventListener('deviceready', function() {
 		}
 		
 		var bullet = new Bullet1();
-		bullet.img = scene.physics.add.image(firer._tower.x,firer._tower.y, 'bullet1');
-		bullet.speed = 800;
+		bullet.img = scene.physics.add.image(firer._tower.x + (RECTWIDTH - RECTWIDTH/4) / 4,firer._tower.y + (RECTHEIGHT / 4), 'bullet1');
+		bullet.speed = 200;
 		bullet.dmg = firer.dmg;
 		bullet.bDisable = false;
 		bullet.target = target;
@@ -954,7 +961,7 @@ document.addEventListener('deviceready', function() {
 		
 		switch (type){
 			case 0:
-				enemy.HP = 20;
+				enemy.HP = 15;
 				enemy.gold = 1;
 				enemy.img = scene.physics.add.image(spawnpoint.x + RECTWIDTH / 2,spawnpoint.y + RECTHEIGHT / 2, 'enemy1');
 			break;
@@ -1000,7 +1007,6 @@ document.addEventListener('deviceready', function() {
 				gold += listEnemy[i].gold;
 				listEnemy[i].img.destroy();
 				waveControl.creatureDeath += 1;
-				
 			}
 		}
 		
@@ -1199,7 +1205,6 @@ document.addEventListener('deviceready', function() {
 		var sp = new Spawner();
 		sp.type = type;
 		sp.amount = amount;
-		sp.startTime = startTime;
 		sp.interval = intervalTime;
 		sp.intervalCount = 0;
 		
@@ -1209,6 +1214,12 @@ document.addEventListener('deviceready', function() {
 	
 	// Hàm thực hiện Tạo Creature sau khi có thông tin tạo từ SpawnCreature
 	function Spawning(scene) {
+		
+		if (stopSpawn) {
+			stopSpawn = false;
+			spawnList.splice(0, spawnList.length);
+		}
+		
 		for (var i = 0; i < spawnList.length; i++) {
 			
 			//Kiểm tra nếu tạo hết số lượng Creature rồi thì không tạo nữa
@@ -1257,8 +1268,7 @@ document.addEventListener('deviceready', function() {
 	// Các thông tin cần thiết để tạo các Wave tấn công
 	function Waves (){
 		var level;					// Level 
-		var nextWaveTime;			// Thời gian bắt buộc phải bắt đầu Wave kế tiếp
-		var nextWaveTimeCount;		
+	
 		var img;					// Button bắt đầu Wave kế tiếp =))
 		var bEndWave;				// Game đang trong trạng thái chờ đến Wave kế tiếp (cho phép xây dựng) hay đang trong Wave
 		
@@ -1271,8 +1281,6 @@ document.addEventListener('deviceready', function() {
 		waveControl = new Waves();
 		waveControl.level = 0;
 		waveControl.bEndWave = true;
-		waveControl.nextWaveTime = 30;
-		waveControl.nextWaveTimeCount = waveControl.nextWaveTime;
 		waveControl.img = scene.add.sprite(50, 6 * RECTHEIGHT + RECTHEIGHT/4, 'startWaveButton').setInteractive();
 		waveControl.img.visible = true;
 		waveControl.creatureDeath = 0;
@@ -1299,7 +1307,8 @@ document.addEventListener('deviceready', function() {
 		{
 			case 0:
 				waveControl.creatureAmount = 2;
-				SpawnCreature(0,2,1,1);			
+				SpawnCreature(0,2,1,1);	
+								
 				break;
 			case 1:
 				waveControl.creatureAmount = 6;
@@ -1348,8 +1357,10 @@ document.addEventListener('deviceready', function() {
 				break;
 			default:
 				waveControl.creatureAmount = 0;
+				debugText.setText(waveControl.level);
 				break;
 		}
+		
 	}
 	
 	// Kết thúc Wave, Gọi khi [creatureDeath == creatureAmount]
@@ -1358,29 +1369,14 @@ document.addEventListener('deviceready', function() {
 		waveControl.level++;
 		waveControl.bEndWave = true;
 		waveControl.img.visible = true;
-		waveControl.nextWaveTimeCount = waveControl.nextWaveTime;
 		waveControl.creatureDeath = 0;
 		EnableDrawPath();
 	}
 	
-	// Đếm thời gian chờ, nếu hết thời gian chờ gọi hàm [StartWave] trong này
-	function WaveTimeCount()
-	{
-		waveControl.nextWaveTimeCount -= getDelta;
-		
-		if (waveControl.nextWaveTimeCount <= 0)
-			StartWave();
-	}
-	
 	// Thực hiện việc đếm thời gian chờ và Gọi [EndWave]
 	function WavesUpdate() {
-		if (waveControl.bEndWave) {
-			WaveTimeCount();	
-		}
-		else {
-			if (waveControl.creatureAmount <= waveControl.creatureDeath)
-				EndWave();
-		}
+		if (waveControl.creatureAmount <= waveControl.creatureDeath && !waveControl.bEndWave)
+			EndWave();
 	}
 	
 	//====================================================================//
@@ -1700,13 +1696,20 @@ document.addEventListener('deviceready', function() {
 		
 		DrawPath();
 		
+		if (resetGold) {
+			resetGold = false;
+			gold = 10;
+		}
+		
 		AddFollower(this);
 		IsGetGoal(this);
 
 		if (keyA.isDown)
 		{
-			SpawnCreature(0,10,1,0.5);
+			ResetGame();
 		}
+		
+		
 		
 	}
 });
