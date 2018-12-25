@@ -42,7 +42,30 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
             - Để xây tháp Player chọn Button tháp mình muốn xây sau đó chọn ô trên Board để xây  
                   + Nếu Gold của Player ít hơn số Gold Tháp cần hoặc nơi tháp xây bít hết đường đi của kẻ thù thì Tháp sẽ không xuất hiện.  
                   + Nếu tháp được xây trên đường đi của kẻ thù thì kẻ thù sẽ phải thay đổi đường đi.   
-            - Để Nâng Cấp hoặc Xóa tháp, Player nhấn giữ vào tháp một lúc rồi thả thì tháp sẽ hiện Button Xóa và Button Nâng Cấp.  
+            - Để Nâng Cấp hoặc Xóa tháp, Player nhấn giữ vào tháp một lúc rồi thả thì tháp sẽ hiện Button Xóa và Button Nâng Cấp. 
+                  + Button Xóa
+                  + Button Nâng Cấp
+            - Có 2 loại Enemy:
+                  + Red Enemy: có tất cả 3 cấp độ với mức máu và lượng vàng rơi ra cao theo từng cấp độ, có thể bị các tower chặn đường.
+                        ++ Red Enemy Lv1: Hp 15, Gold 1.<img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/RedEnemylv1.png?raw=true"
+                        ++ Red Enemy Lv2: Hp 100, Gold 10.
+                        ++ Red Enemy Lv3: Hp 1000, Gold 100.
+                  + Yellow Enemy: có tất cả 3 cấp độ với mức máu và lượng vàng rơi ra cao theo từng cấp độ, không thể bị các tower chặn đường.
+                        ++ Yellow Enemy Lv1: Hp 10, Gold 4.
+                        ++ Yellow Enemy Lv2: Hp 70, Gold 16.
+                        ++ Yellow Enemy Lv3: Hp 600, Gold 100.
+            - Có 3 loại Tower:
+                   + Tower 1: Có 3 Level, Có thể tấn công cả 2 loại Enemy, khi level 3 thì chỉ còn tấn công được Red Enemy.
+                        ++ Tower 1 Lv1: Tốc độc bắn 1.0, tấn công 3.
+                        ++ Tower 1 Lv2: Tốc độc bắn 2.5, tấn công 4.
+                        ++ Tower 1 Lv3: Tốc độc bắn 2.5, tấn công 24.
+                   + Tower 2: Có 1 Level, Có thể làm chậm tốc độ di chuyển của cả 2 loại Enemy.
+                        ++ Tower 2 Lv1: Làm chậm 30%.
+                   + Tower 3: Có 2 Level, Chỉ có thể tấn công Yellow Enemy.
+                        ++ Tower 3 Lv1: Tốc độc bắn 0.5, tấn công 20.
+                        ++ Tower 3 Lv2: Tốc độc bắn 0.5, tấn công 100.
+
+
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay1.png?raw=true">  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay2.png?raw=true">  
             <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay3.png?raw=true">  
