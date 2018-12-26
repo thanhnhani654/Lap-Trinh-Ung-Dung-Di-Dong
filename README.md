@@ -71,6 +71,6 @@ Game Thủ Thành chiến thuật với nhiệm vụ của bạn là xây dựng
 <img src="https://github.com/thanhnhani654/Lap-Trinh-Ung-Dung-Di-Dong/blob/master/Huong%20dan/Gioi%20Thieu%20Game%20IMG/GamePlay4.png?raw=true">  
  <a name="taigame"></a>
 ### IV. Link Tải Game
-https://drive.google.com/file/d/1J0cLcfRWNupcelVdnunm_5Saqt-TOFjc/view?usp=sharing
+https://drive.google.com/file/d/1wbKoBJvDTXxWiFDRS_YfFP_2L4Ht3CIk/view?usp=sharing
 
 
